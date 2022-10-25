@@ -15,10 +15,10 @@ router.get('/', async (req, res) => {
       const posts = allPosts.map((post) => 
       post.get({plain: true})
     );
-      console.log(posts)
-    // res.render('homepage', {
-    //     posts
-    // });
+    console.log(posts);
+    res.render('homepage', {
+        posts
+    });
     }catch (err) {
         console.log(err);
         res.status(500).json(err)
