@@ -4,8 +4,9 @@
         <h4>
           {{post.post_title}}.
         </h4>
-        <p>Posted by {{post.user.username}} on {{format_date post.createdAt}}</p>
-        <p>{{post.body}}</p>
+        <p> {{format_date post.createdAt}}</p>
+      
       </div>
     {{/each}}
   </section>
+  

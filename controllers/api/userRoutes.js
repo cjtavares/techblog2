@@ -1,10 +1,11 @@
 const router = require('express').Router();
-const { User } = require('../../models');
+const { Users, Posts } = require('../../models');
+const withAuth = require('../../utils/auth');
 
-// /api/login
+// /api/users/login
 router.post('/login', async (req, res) => {
   try {
-    const userData = await User.findOne({ where: { email: req.body.email}});
+    const userData = await Users.findOne({ where: { username: req.body.username}});
     if (!userData){
         res
         .status(400)
@@ -12,7 +13,7 @@ router.post('/login', async (req, res) => {
         return;
     }  
 
-    const validatePassword = await userData.checkPassword(req.body.password);
+    const validatePassword = userData.checkPassword(req.body.password);
 
     if (!validatePassword) {
         res
@@ -29,15 +30,16 @@ router.post('/login', async (req, res) => {
       });
   
   }catch (err) {
+    console.log(err)
     res.status(500).json(err)
   }
   });
 
-  // /api/signup
+  // /api/users/signup
   router.post('/signup', async (req, res) => {
     try{
-    const newUser = await User.create({
-      username: req.body.email,
+    const newUser = await Users.create({
+      username: req.body.username,
       password: req.body.password
     })
     
@@ -46,7 +48,7 @@ router.post('/login', async (req, res) => {
           req.session.user_id = newUser.id;
           req.session.logged_in = true;
           
-          res.json({ user: userData, message: 'You are now logged in!' });
+          res.json({message: 'User Created!' });
         });
     
       } catch (err) {
@@ -54,7 +56,7 @@ router.post('/login', async (req, res) => {
       }
     });
 
-    // /api/logout
+    // /api/users/logout
   router.post('/logout', (req, res) => {
     if (req.session.logged_in) {
       req.session.destroy(() => {
@@ -64,5 +66,16 @@ router.post('/login', async (req, res) => {
       res.status(404).end();
     }
   });
+
+  router.post('/newpost', withAuth, async (req, res) => {
+    try{
+    const newPost = await Posts.create({
+      post_title: req.body.username,
+      body: req.body.password
+    })
+      } catch (err) {
+        res.status(500).json(err)
+      }
+    });
 
 module.exports = router;
