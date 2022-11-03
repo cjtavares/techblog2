@@ -34,6 +34,29 @@ router.get('/signup', (req, res) => {
   res.render('signup')
 });
 
+router.get('/post/:id', withAuth, async (req, res) => {
+  try{
+  const indPost = await Posts.findByPk( req.params.id, {
+      include: [{
+        model: Users,
+        attributes: ["username"]
+          
+      }]
+  });
+
+  const post = indPost.get({ plain: true });
+
+ console.log(post)
+  res.render('post', {
+     post,
+     logged_in: req.session.logged_in
+  });
+} catch (err){
+  console.log(err);
+  res.status(500).json(err)
+}
+});
+
 
 
 module.exports = router;
